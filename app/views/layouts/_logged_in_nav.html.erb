@@ -1,0 +1,21 @@
+
+<nav class="navbar navbar-light" style="background-color: #e3f2fd;">
+<div class="container-fluid">
+  <div class="navbar-header">
+    <a class="navbar-brand" href="/places">TheBigMapple</a>
+  </div>
+  <ul class="nav navbar-nav">
+    <li class="active"><%= link_to "Home", user_path(session[:user_id]) %></li>
+    <li><a href="/places/new">Create a Place</a></li>
+  </ul>
+  <ul class="nav navbar-nav navbar-right">
+    <li><%= link_to user_path(session[:user_id]) do %><span class="glyphicon glyphicon-user"></span> <%= label_tag nil, "Profile", class: "word" %>
+    <% end %></li>
+    <li><%= link_to logout_path, {controller: :sessions, action: :destroy}, method: :delete do %>
+      <span class="glyphicon glyphicon-log-in">
+        <%= label_tag nil, "Logout", class: "word" %>
+    <% end %>
+    </li>
+  </ul>
+</div>
+</nav>

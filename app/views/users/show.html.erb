@@ -1,0 +1,194 @@
+
+<div id="map-container">
+<div id="floating-panel">
+      <button id="drop" onclick="drop()" class="btn btn-success">Drop Markers</button>
+    </div>
+<div id="map"></div>
+<br>
+
+<div id="out"></div><br><hr>
+</div>
+
+<h1><%= @user.name %></h1>
+<% if @user.places.any? || @user.make_places.any? %>
+
+  <% if @user.make_places.any? %>
+    <h3>Places You've Created</h3>
+      <% @user.make_places.map do |made| %>
+      <div class="card" style="width:300px; margin-bottom: 30px;">
+
+      <div>
+        <h4 class="card-title"> <%= made.place.name %></h4>
+        <% if made.place.img_url %>
+        <img class="card-img-top" src=<%= url_for(made.place.img_url) %> alt="Card image">
+        <% end %>
+        <p class="card-text">Ranking <%= made.place.average_rating %></p>
+        <p class="card-text">User Adds: <%= made.place.popularity %></p>
+        <%= button_to "See Details", place_path(made.place.id), method: :get, form_class: "btn", id: 'btn' %>
+        <input type="hidden" class="lat-div" value="<%=made.place.four_dec_lat%>" >
+        <input type="hidden" class="lng-div" value="<%=made.place.four_dec_lng%>" >
+
+
+      </div>
+    </div>
+
+      <% end %>
+
+  <% end %>
+  <% if @user.places.any? %>
+<h3>Your Saved Places</h3>
+
+  <% @user.places.map do |place| %>
+  <div class="card" style="width:300px; margin-bottom: 30px;">
+
+  <div>
+    <h4 class="card-title"> <%= place.name %></h4>
+    <% if place.img_url %>
+    <img class="card-img-top" src=<%= url_for(place.img_url) %> alt="Card image">
+    <% end %>
+    <p class="card-text">Ranking <%= place.average_rating %></p>
+
+    <%= button_to "See Details", place_path(place.id), method: :get, class: "btn btn-primary", id: 'btn' %>
+    <input type="hidden" class="lat-div" value="<%=place.four_dec_lat%>" >
+    <input type="hidden" class="lng-div" value="<%=place.four_dec_lng%>" >
+    <% up = find_up(user: @user.id, place: place.id) %>
+
+    <% if up.rating != nil  %>
+    <p>Your Rating <%= up.rating %></p>
+    <% end %>
+  <%= form_tag(rank_path(place.id), method: :patch) do %>
+
+  <%= select_tag "rank[]", options_for_select((1..5)) %>
+  <%= submit_tag "Rate This Place" %>
+  <% end %>
+
+  <%= link_to "Remove from your List", delete_up_path(place.id), method: :delete%><br />
+  <% end %>
+  <% end  %>
+  <% else %>
+  <h3>No Places in your Profile!</h3>
+
+  <% end %>
+
+
+
+  <script>
+  var markers = [];
+  var map;
+
+  function initMap(){
+
+      var options = {
+          zoom:10,
+          center: {lat:40.7012, lng:-73.9875},
+          mapTypeId: 'hybrid'
+      };
+
+
+       map = new google.maps.Map(document.getElementById('map'), options);
+
+      var bmarker = new google.maps.Marker({
+          draggable: true,
+          animation: google.maps.Animation.DROP,
+          position: {lat:40.7010, lng:-73.9875},
+          title: 'Your Location!',
+          icon: {
+          url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"},
+
+          map: map
+
+      });
+
+      addToArray();
+
+     }
+
+
+
+
+
+
+
+
+     for(var i = 0; i < markers.length; i++ ){
+     addMarker(markers[i]);
+     }
+
+         function addMarker(coords){
+             var arr = [];
+
+
+         var marker = new google.maps.Marker({
+                     position: coords,
+                     map: map,
+                     draggable: true,
+                     animation: google.maps.Animation.DROP
+                 });
+
+
+             }
+
+
+
+
+
+
+
+
+
+     function toggleBounce() {
+          if (bmarker.getAnimation() !== null) {
+            bmarker.setAnimation(null);
+          } else {
+            bmarker.setAnimation(google.maps.Animation.BOUNCE);
+          }
+        }
+
+
+
+
+          function drop() {
+
+
+
+          for (var i = 0; i < markers.length; i++) {
+            addMarkerWithTimeout(markers[i], i * 200);
+          }
+        }
+
+        function addMarkerWithTimeout(position, timeout) {
+          window.setTimeout(function() {
+            markers.push(new google.maps.Marker({
+              position: position,
+              map: map,
+              animation: google.maps.Animation.DROP
+            }));
+          }, timeout);
+        }
+
+
+        function addToArray(){
+          var lats = document.getElementsByClassName('lat-div');
+          var lngs = document.getElementsByClassName('lng-div');
+
+          for(var i = 0; i < lats.length;i++){
+              markers.push({lat: parseFloat(lats[i].value), lng: parseFloat(lngs[i].value)})
+              }
+          }
+
+
+
+          function clearMarkers() {
+              for (var i = 0; i < markers.length; i++) {
+                markers[i].setMap(null);
+              }
+              markers = [];
+            }
+
+  </script>
+
+
+
+  <script async defer
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBPdhJ7Z6pwRpxtlHG4aYSf2T7XivLBpiY&callback=initMap">
+  </script>

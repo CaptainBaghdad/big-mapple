@@ -1,0 +1,114 @@
+ <center>
+<p>Please fill in address and press convert button.</p>
+<br>
+<div>
+     <h3> Please copy and paste the values for latitude and longitude in the appropriate fields</h3>
+
+    <input id="address" type="text" placeholder="Enter address here" />
+    <button id="btn">Get LatLong</button>
+    <div>
+        <p>Latitude:
+            <input type="text" id="latitude" readonly />
+        </p>
+        <p>Longitude:
+            <input type="text" id="longitude" readonly />
+        </p>
+    </div>
+</div>
+</center>
+
+
+<div class="container">
+<center id="c">
+<h1 class="mb-10">Add a Location</h1>
+
+
+<%= form_for @place,  :html => {:class => 'form_group'} do |f| %>
+<div class="col-3">
+<%= f.label :name %>
+<br>
+<%= f.text_field :name , class: "col-3", id: "name"%>
+</div>
+<br>
+<div class="col-3">
+<%= f.label "Your Rating" %>
+<%= f.select "average_rating", options_for_select((1..5)) %>
+<br>
+
+</div>
+<br>
+
+<div class="col-3">
+<%= f.label :lat %>
+<br>
+<%= f.text_field :lat , class: "col-3", id:"lat" %>
+</div>
+<br>
+
+<div class="col-3">
+<%= f.label :lng %>
+<br>
+<%= f.text_field :lng , class: "col-3", id:"lng" %>
+</div>
+<br>
+
+
+<div class="col-3">
+<%= f.label "Description" %>
+<br>
+<%= f.text_area :desc , id:"desc"%>
+</div>
+<br>
+
+<div class="col-3">
+<%= f.label :img_url %>
+<br>
+<%= f.file_field :img_url , class: "col-3"%>
+</div>
+<br>
+
+<%= f.submit class:"btn btn-primary", id: "place-btn" %>
+
+<% end %>
+</div>
+</center>
+</div>
+
+
+
+<script>
+function showResult(result) {
+    document.getElementById('latitude').value = result.geometry.location.lat().toFixed(4);
+    document.getElementById('longitude').value = result.geometry.location.lng().toFixed(4);
+}
+
+function getLatitudeLongitude(callback, address) {
+
+    address = address || 'New York, New York, United States';
+
+    geocoder = new google.maps.Geocoder();
+    if (geocoder) {
+        geocoder.geocode({
+            'address': address
+        }, function (results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                callback(results[0]);
+            }
+        });
+    }
+}
+
+var button = document.getElementById('btn');
+
+button.addEventListener("click", function () {
+    var address = document.getElementById('address').value;
+    getLatitudeLongitude(showResult, address)
+});
+
+
+
+</script>
+
+<script async defer
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBPdhJ7Z6pwRpxtlHG4aYSf2T7XivLBpiY&callback=initMap">
+</script>

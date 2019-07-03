@@ -1,0 +1,48 @@
+
+
+<% if flash[:notice] %>
+<center><h3 class="flash"><%= flash[:notice] %></h3></center>
+<% end  %>
+<center id="c">
+<h1 class="mb-10">Login</h1>
+<div class="form-holder">
+<%= form_tag ('/sessions') do %>
+<br>
+<div class="form-group">
+<%= label_tag :email %>
+<br>
+<%= text_field_tag :email, "", class: "form-control", id: "email"%>
+</div>
+<br>
+<div class="form-group">
+<%= label_tag :password %>
+<br>
+<%= password_field_tag :password, "", class: "form-control", id:"password"%>
+</div>
+<br>
+
+<%= submit_tag "Log in", class:"btn btn-primary", id: "sub-btn" %>
+
+<% end %>
+</div>
+</center>
+
+<script>
+
+$(document).ready(function(){
+$('#sub-btn').click(function(e){
+
+ if($('#name').val() == "" || $('#email').val() == "" || $('#password').val() == ""){
+     e.preventDefault();
+
+    $('#c').effect("shake", "fast");
+
+ }
+
+});
+
+});
+
+
+
+</script>
